@@ -440,25 +440,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Framer** for animation library
 - **Lucide** for beautiful icons
 
-## 📞 Support
-
-For support, please:
-
-- **Open an issue** on GitHub
-- **Email us** at support@yourcompany.com
-- **Join our Discord** community
-- **Check the documentation** at [docs.yourapp.com](https://docs.yourapp.com)
-
-## 🗺️ Roadmap
-
-- [ ] **Advanced AI Features** - Enhanced conversation analysis
-- [ ] **Team Collaboration** - Multi-user support
-- [ ] **Integration APIs** - Connect with popular email providers
-- [ ] **Analytics Dashboard** - Detailed performance metrics
-- [ ] **Mobile App** - Native iOS and Android applications
-- [ ] **Voice Messages** - Audio message support
-- [ ] **File Attachments** - Document and media sharing
-
 ---
 
 **Built with ❤️ by the AI Chatbot Smart Inbox Team**
