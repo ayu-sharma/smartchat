@@ -17,6 +17,8 @@ A modern, AI-powered email management system that helps users handle customer co
 - **Internal content detection** for sensitive information
 - **Time-saving metrics** to track productivity improvements
 - **Intelligent suggestion system** for common responses
+- **Dual AI Architecture**: Local knowledge base (current) + External AI API integration (future)
+- **Fallback system** ensuring continuous operation regardless of AI service availability
 
 ### Modern User Interface
 - **Conversation List** with elegant design and smooth scrolling
@@ -29,11 +31,13 @@ A modern, AI-powered email management system that helps users handle customer co
 
 ### Core Functionality
 - **Real-time message sending** with instant delivery
-- **AI response generation** powered by advanced language models
+- **Hybrid AI response generation** - Local knowledge base + External AI APIs
 - **Conversation summarization** for quick context understanding
 - **Smart suggestion system** for efficiency improvements
 - **Notification system** for important updates
 - **Search and filtering** capabilities
+- **HTTP client integration** with Axios for API communication
+- **Graceful fallbacks** when external services are unavailable
 
 ## 🛠️ Tech Stack
 
@@ -76,9 +80,18 @@ yarn install
 Create a `.env.local` file in the root directory:
 
 ```bash
-# AI Service Configuration
+# AI Service Configuration (Optional - for enhanced AI features)
 OPENAI_API_KEY=your_openai_api_key_here
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+GOOGLE_AI_API_KEY=your_google_ai_api_key_here
+
+# API Configuration
 NEXT_PUBLIC_API_URL=http://localhost:3000/api
+NEXT_PUBLIC_AI_MODE=local # Options: 'local', 'api', 'hybrid'
+
+# External AI Service URLs (when using API mode)
+AI_SERVICE_URL=https://api.openai.com/v1
+AI_FALLBACK_URL=https://api.anthropic.com/v1
 
 # Database Configuration (if applicable)
 DATABASE_URL=your_database_url_here
@@ -114,12 +127,17 @@ ai-chatbot-smart-inbox/
 │   │   ├── initialData.js
 │   │   └── knowledgeBase.js
 │   ├── utils/              # Helper functions and utilities
-│   │   ├── aiHelpers.js
+│   │   ├── aiHelpers.js    # Local AI logic and knowledge base
+│   │   ├── aiService.js    # External AI API integration with Axios
 │   │   ├── messageUtils.js
 │   │   └── formatters.js
 │   ├── api/                # API routes
 │   │   ├── conversations/
-│   │   └── ai/
+│   │   ├── ai/            # AI service endpoints
+│   │   │   ├── local.js   # Local AI processing
+│   │   │   ├── external.js # External AI API calls
+│   │   │   └── hybrid.js  # Combined AI approach
+│   │   └── suggestions/
 │   ├── globals.css         # Global styles
 │   ├── layout.js          # Root layout component
 │   └── page.js            # Main application page
@@ -142,8 +160,78 @@ ai-chatbot-smart-inbox/
 | `npm run lint` | Run ESLint for code quality |
 | `npm run lint:fix` | Fix ESLint issues automatically |
 | `npm run type-check` | Run TypeScript type checking |
+| `npm run test:ai` | Test AI integration (local and API modes) |
+| `npm run setup:ai` | Configure AI service connections |
+
+### Development Scripts for AI Testing
+
+```bash
+# Test local AI responses
+npm run test:ai:local
+
+# Test external AI API integration
+npm run test:ai:api
+
+# Test hybrid AI mode
+npm run test:ai:hybrid
+
+# Validate AI configuration
+npm run validate:ai-config
+```
 
 ## 🔧 Configuration
+
+### AI Mode Configuration
+
+The application supports three AI modes that can be configured via environment variables:
+
+```javascript
+// AI Mode Options
+const AI_MODES = {
+  LOCAL: 'local',    // Uses local knowledge base (current default)
+  API: 'api',        // Uses external AI APIs via Axios
+  HYBRID: 'hybrid'   // Combines both approaches
+};
+```
+
+#### Local Mode (Current Implementation)
+- Uses predefined knowledge base and response templates
+- No external API calls required
+- Fast response times
+- Works offline
+- Limited to predefined responses
+
+```javascript
+// Example local AI configuration
+const localAI = {
+  knowledgeBase: './constants/knowledgeBase.js',
+  responseTemplates: './constants/responseTemplates.js',
+  fallbackResponses: true
+};
+```
+
+#### API Mode (Future Implementation)
+- Integrates with external AI services using Axios
+- Dynamic response generation
+- Advanced natural language processing
+- Requires internet connection and API keys
+- More intelligent and contextual responses
+
+```javascript
+// Example API configuration with Axios
+const apiConfig = {
+  baseURL: process.env.AI_SERVICE_URL,
+  timeout: 10000,
+  retries: 3,
+  fallbackToLocal: true
+};
+```
+
+#### Hybrid Mode (Recommended for Production)
+- Combines local knowledge base with AI APIs
+- Falls back to local responses if API fails
+- Best of both worlds approach
+- Optimal performance and reliability
 
 ### TailwindCSS Configuration
 
@@ -167,11 +255,46 @@ module.exports = {
 
 ### AI Integration
 
-The application integrates with AI services for:
-- Response generation
-- Content summarization
-- Smart suggestions
-- Context analysis
+The application supports flexible AI integration with multiple approaches:
+
+#### Current Implementation (Local AI)
+- **Local Knowledge Base**: Predefined responses and templates
+- **Fast Processing**: No network latency
+- **Offline Capability**: Works without internet
+- **Reliable**: No dependency on external services
+
+#### Future Implementation (External AI APIs)
+The application is designed to seamlessly integrate with external AI services:
+
+```javascript
+// AI Service Integration with Axios
+import axios from 'axios';
+
+const aiService = axios.create({
+  baseURL: process.env.AI_SERVICE_URL,
+  timeout: 10000,
+  headers: {
+    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+    'Content-Type': 'application/json'
+  }
+});
+
+// Supported AI Providers
+const AI_PROVIDERS = {
+  OPENAI: 'OpenAI GPT-4',
+  ANTHROPIC: 'Claude',
+  GOOGLE: 'Gemini',
+  CUSTOM: 'Custom AI Endpoint'
+};
+```
+
+#### AI Features Available
+- **Response Generation**: Context-aware reply suggestions
+- **Content Summarization**: Automatic conversation summaries  
+- **Smart Suggestions**: Intelligent quick responses
+- **Context Analysis**: Understanding conversation flow
+- **Sentiment Detection**: Emotional tone analysis
+- **Language Translation**: Multi-language support (with AI APIs)
 
 ## 🎨 Key Components
 
@@ -179,13 +302,22 @@ The application integrates with AI services for:
 Displays all conversations with real-time updates and unread indicators.
 
 ### AICopilot
-Provides intelligent response suggestions and conversation insights.
+Provides intelligent response suggestions and conversation insights with dual-mode operation:
 
-### MessageList
-Renders conversation messages with rich formatting and media support.
+**Local Mode Features:**
+- Predefined response templates
+- Quick suggestion matching
+- Offline functionality
+- Instant response times
+
+**API Mode Features (Future):**
+- Dynamic response generation via Axios
+- Context-aware suggestions
+- Advanced language understanding
+- Real-time learning capabilities
 
 ### ReplyComposer
-Advanced text editor with AI-powered suggestions and formatting tools.
+Advanced text editor with AI-powered suggestions and formatting tools, supporting both local and API-based AI assistance.
 
 ## 📱 Mobile Responsiveness
 
@@ -228,7 +360,7 @@ The application can be deployed on:
 # Run unit tests
 npm run test
 
-# Run integration tests
+# Run integration tests  
 npm run test:integration
 
 # Run e2e tests
@@ -236,7 +368,23 @@ npm run test:e2e
 
 # Generate coverage report
 npm run test:coverage
+
+# AI-specific testing
+npm run test:ai:local      # Test local AI responses
+npm run test:ai:api        # Test external AI API calls
+npm run test:ai:fallback   # Test fallback mechanisms
+npm run test:axios         # Test HTTP client functionality
 ```
+
+### AI Testing Scenarios
+
+The application includes comprehensive testing for AI functionality:
+
+- **Local AI Testing**: Validates knowledge base responses
+- **API Integration Testing**: Tests Axios-based AI service calls
+- **Fallback Testing**: Ensures graceful degradation when APIs fail
+- **Response Quality Testing**: Validates AI response appropriateness
+- **Performance Testing**: Measures response times for both modes
 
 ## 🔒 Security
 
