@@ -441,16 +441,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Lucide** for beautiful icons
 
 ---
-
-**Built with ❤️ by the AI Chatbot Smart Inbox Team**
-
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/ai-chatbot-smart-inbox.svg?style=social&label=Star)](https://github.com/yourusername/ai-chatbot-smart-inbox)
-[![GitHub forks](https://img.shields.io/github/forks/yourusername/ai-chatbot-smart-inbox.svg?style=social&label=Fork)](https://github.com/yourusername/ai-chatbot-smart-inbox/fork)
-[![GitHub issues](https://img.shields.io/github/issues/yourusername/ai-chatbot-smart-inbox.svg)](https://github.com/yourusername/ai-chatbot-smart-inbox/issues)
-
-## 📊 Project Stats
-
-![GitHub repo size](https://img.shields.io/github/repo-size/yourusername/ai-chatbot-smart-inbox)
-![GitHub contributors](https://img.shields.io/github/contributors/yourusername/ai-chatbot-smart-inbox)
-![GitHub last commit](https://img.shields.io/github/last-commit/yourusername/ai-chatbot-smart-inbox)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/yourusername/ai-chatbot-smart-inbox)
